@@ -98,7 +98,7 @@ class ChampionListItem extends StatelessWidget {
   const ChampionListItem({Key key, this.champion, this.onTap}) : super(key: key);
 
   IconData getIcon() {
-    if (champion.chest == null) {
+    if (champion.id == null) {
       return Icons.lock_outline;
     }
 
@@ -265,7 +265,7 @@ class _HomeScreenState extends State<HomeScreen> {
           .toList();
       this.disabledChampionsList = ddragonChampionList
           .where((str) => !championNameList.contains(str))
-          .map((str) => Champion(name: str, chest: null))
+          .map((str) => Champion(name: str, chest: false))
           .toList();
     });
   }
