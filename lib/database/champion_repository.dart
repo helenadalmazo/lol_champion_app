@@ -54,7 +54,7 @@ class ChampionRepository {
     return """
       CREATE TABLE ${Champion.table} (
         ${Champion.columnId} INTEGER PRIMARY KEY,
-        ${Champion.columnName} TEXT NOT NULL,
+        ${Champion.columnName} TEXT NOT NULL UNIQUE,
         ${Champion.columnChest} INTEGER NOT NULL DEFAULT 0,
         ${Champion.columnAccountId} INTEGER NOT NULL,
         FOREIGN KEY (${Champion.columnAccountId}) REFERENCES account (${Account.columnId}) 
