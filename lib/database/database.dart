@@ -39,8 +39,4 @@ class LolChampionAppDatabase {
     db.execute(AccountRepository.createTable());
     db.execute(ChampionRepository.createTable());
   }
-
-  Future<void> closeDatabase() async{
-    return (await database).close();
-  }
 }
