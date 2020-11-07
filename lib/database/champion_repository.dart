@@ -6,13 +6,12 @@ import 'database.dart';
 
 class ChampionRepository {
 
-  Future<void> insert(Account account, Champion champion) async {
+  Future<int> insert(Account account, Champion champion) async {
     final Database database = await LolChampionAppDatabase.instance.database;
 
-    await database.insert(
+    return database.insert(
       Champion.table,
       champion.toMap(account)
-//      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
@@ -33,7 +32,7 @@ class ChampionRepository {
   Future<void> update(Account account, Champion champion) async {
     final Database database = await LolChampionAppDatabase.instance.database;
 
-    await database.update(
+    return database.update(
       Champion.table,
       champion.toMap(account),
       where: "${Champion.columnId} = ?",

@@ -93,7 +93,7 @@ class AccountListItem extends StatelessWidget {
 
 class ChampionListItem extends StatelessWidget {
   final Champion champion;
-  final ValueChanged<Champion> onTap;
+  final Function onTap;
 
   const ChampionListItem({Key key, this.champion, this.onTap}) : super(key: key);
 
@@ -109,7 +109,7 @@ class ChampionListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () {
-          onTap(champion);
+          onTap(champion, context);
         },
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -165,7 +165,7 @@ class ChampionListItem extends StatelessWidget {
 class ChampionList extends StatelessWidget {
   final String title;
   final List<Champion> championList;
-  final ValueChanged<Champion> onTapItem;
+  final Function onTapItem;
 
   const ChampionList({Key key, this.title, this.championList, this.onTapItem}) : super(key: key);
 
@@ -286,10 +286,11 @@ class _HomeScreenState extends State<HomeScreen> {
 //    });
 //  }
 
-    void addChampion(Champion champion) {
+    void addChampion(Champion champion, BuildContext context) {
     champion.chest = false;
-    championRepository.insert(selectedAccount, champion).then((_) {
+    championRepository.insert(selectedAccount, champion).then((id) {
       setState(() {
+        champion.id = id;
         this.selectedAccount.championList.add(champion);
         this.selectedAccount.championList.sort((a, b) => a.name.compareTo(b.name));
         this.disabledChampionsList.remove(champion);
@@ -297,12 +298,15 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void toggleChampionChest(Champion champion) {
+  void toggleChampionChest(Champion champion, BuildContext context) {
     champion.chest = !champion.chest;
 
-//    Text text = Text('Campeão ${champion.name} marcado ${champion.chest ? 'com' : 'sem'} baú.');
-//    SnackBar snackBar = SnackBar(content: text);
-//    Scaffold.of(context).showSnackBar(snackBar);
+    Text text = Text('Campeão ${champion.name} marcado ${champion.chest ? 'com' : 'sem'} baú.');
+    SnackBar snackBar = SnackBar(
+      content: text,
+      duration: Duration(seconds: 3),
+    );
+    Scaffold.of(context).showSnackBar(snackBar);
 
     championRepository.update(selectedAccount, champion).then((_) {
       setState(() {
@@ -480,7 +484,7 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           );
           if (championResult != null) {
-            addChampion(championResult);
+            addChampion(championResult, null);
           }
         },
         child: Icon(Icons.add),
