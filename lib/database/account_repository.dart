@@ -1,4 +1,3 @@
-
 import 'package:lol_champion_app/model/account.dart';
 import 'package:sqflite/sqflite.dart';
 
