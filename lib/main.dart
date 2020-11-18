@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lol_champion_app/screen/setting.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'database/account_repository.dart';
@@ -15,25 +16,42 @@ import 'model/champion.dart';
 
 
 class AppNotifier with ChangeNotifier {
+  final SharedPreferences sharedPreferences;
+  final String THEME_MODE_KEY = 'theme_mode';
+
   ThemeMode _themeMode;
 
-  AppNotifier(this._themeMode);
+  AppNotifier(this.sharedPreferences) {
+    initThemeMode();
+  }
+
+  initThemeMode() {
+    var themeModePref = sharedPreferences.getString(THEME_MODE_KEY) ?? 'light';
+    _themeMode = themeModePref == 'dark' ? ThemeMode.dark : ThemeMode.light;
+  }
 
   ThemeMode get themeMode => _themeMode;
 
   set themeMode(ThemeMode value) {
     _themeMode = value;
     notifyListeners();
+
+    var themeModePref = _themeMode == ThemeMode.dark ? 'dark' : 'light';
+    sharedPreferences.setString(THEME_MODE_KEY, themeModePref);
   }
 }
 
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => AppNotifier(ThemeMode.light),
-      child: LolChampionApp(),
-    ),
-  );
+  WidgetsFlutterBinding.ensureInitialized();
+  Future<SharedPreferences> sharedPreferences = SharedPreferences.getInstance();
+  sharedPreferences.then((value) {
+    runApp(
+      ChangeNotifierProvider(
+        create: (context) => AppNotifier(value),
+        child: LolChampionApp(),
+      ),
+    );
+  });
 }
 
 class LolChampionApp extends StatelessWidget {@override
