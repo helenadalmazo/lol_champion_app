@@ -21,6 +21,7 @@ class _AccountScreenState extends State<StatefulWidget> {
   _AccountScreenState(this.index, this.account);
 
   TextEditingController nameTextEditingController = TextEditingController();
+  String nameTextValidation;
 
   Widget getImageWidget() {
     if (index == null) {
@@ -56,6 +57,17 @@ class _AccountScreenState extends State<StatefulWidget> {
     }
     nameTextEditingController.text = account.name;
     super.initState();
+  }
+
+  bool validateName() {
+    if (nameTextEditingController.text == null
+        || nameTextEditingController.text.isEmpty) {
+      nameTextValidation = 'Campo obrigatório';
+      return false;
+    }
+
+    nameTextValidation = null;
+    return true;
   }
 
   @override
@@ -110,6 +122,12 @@ class _AccountScreenState extends State<StatefulWidget> {
             icon: Icon(Icons.check),
             tooltip: 'Salvar',
             onPressed: () {
+              var validateResult = validateName();
+              if (!validateResult) {
+                setState(() { });
+                return;
+              }
+
               account.name = nameTextEditingController.text;
               Navigator.pop(context, {
                 'action': 'save',
@@ -141,6 +159,9 @@ class _AccountScreenState extends State<StatefulWidget> {
                   controller: nameTextEditingController,
                   style: Theme.of(context).textTheme.headline6,
                   textAlign: TextAlign.center,
+                  decoration: InputDecoration(
+                    errorText: nameTextValidation
+                  ),
                 ),
               )
             ],
