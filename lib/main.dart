@@ -300,16 +300,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-//  was used with FAB
-//  void addChampion(Champion champion) {
-//    championRepository.insert(selectedAccount, champion).then((_) {
-//      setState(() {
-//        this.selectedAccount.championList.add(champion);
-//      });
-//    });
-//  }
-
-    void addChampion(Champion champion, BuildContext context) {
+  void addChampion(Champion champion, BuildContext context) {
     champion.chest = false;
     championRepository.insert(selectedAccount, champion).then((id) {
       setState(() {
@@ -493,28 +484,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget getFAB() {
-    if (selectedAccount == null) {
-      return Container();
-    } else {
-      return FloatingActionButton(
-        onPressed: () async {
-          List<String> existingChampionNameList = selectedAccount.championList.map((champ) => champ.name).toList();
-          var championResult = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChampionScreen(existingChampionNameList: existingChampionNameList)
-            )
-          );
-          if (championResult != null) {
-            addChampion(championResult, null);
-          }
-        },
-        child: Icon(Icons.add),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -574,7 +543,6 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: 16)
         ],
       ),
-//      floatingActionButton: getFAB()
     );
   }
 }
@@ -915,119 +883,6 @@ class _AccountImagesStateScreen extends State<StatefulWidget> {
                 )
               )
           ],
-        )
-    );
-  }
-}
-
-class ChampionScreen extends StatefulWidget {
-  final List<String> existingChampionNameList;
-
-  const ChampionScreen({Key key, this.existingChampionNameList}) : super(key: key);
-  
-  @override
-  _ChampionScreenState createState() {
-    return _ChampionScreenState(existingChampionNameList);
-  }
-}
-
-class _ChampionScreenState extends State<ChampionScreen> {
-  Champion champion;
-  List<String> existingChampionNameList;
-
-  _ChampionScreenState(this.existingChampionNameList);
-
-  void selectChampion(String text) {
-    setState(() {
-      champion.name = ddragonChampionList.firstWhere((element) => element == text);
-    });
-  }
-
-  void setChampionChest(bool bool) {
-    setState(() {
-      champion.chest = bool;
-    });
-  }
-
-  @override
-  void initState() {
-    if (champion == null) {
-      champion = Champion.empty();
-    }
-    super.initState();
-  }
-
-  List<String> getSuggestions() {
-    return ddragonChampionList.where((string) => !existingChampionNameList.contains(string)).toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text((champion.name != null) ? champion.name : 'Novo campeão' ),
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.check,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.pop(context, champion);
-              },
-            )
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            margin: EdgeInsets.only(bottom: 16),
-            child: Column(
-              children: [
-                Container(
-                  child: AutoCompleteTextField<String>(
-                      decoration: InputDecoration(
-                          hintText: "Procurar por nome do campeão"
-                      ),
-                      suggestions: getSuggestions(),
-                      itemFilter:(suggestion, query) {
-                        return suggestion.toLowerCase().startsWith(query.toLowerCase());
-                      },
-                      itemSubmitted: (item) {
-                        selectChampion(item);
-                      },
-                      itemBuilder: (context, item) {
-                        return Container(
-                          padding: EdgeInsets.all(16),
-                          child: Text(
-                              item
-                          ),
-                        );
-                      }
-                  ),
-                ),
-                if ( champion.name != null )
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.asset(
-                          'images/champion/${champion.name}_0.jpg',
-                        ),
-                        Row(
-                          children: [
-                            Checkbox(
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              value: champion.chest,
-                              onChanged: setChampionChest
-                            ),
-                            Text('Já tem baú?')
-                          ],
-                        )
-                      ]
-                  )
-              ],
-            ),
-          ),
         )
     );
   }
