@@ -4,6 +4,9 @@ import 'dart:math';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lol_champion_app/screen/setting.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'database/account_repository.dart';
@@ -11,49 +14,71 @@ import 'database/champion_repository.dart';
 import 'model/account.dart';
 import 'model/champion.dart';
 
-void main() => runApp(LolChampionApp());
+
+class AppNotifier with ChangeNotifier {
+  final SharedPreferences sharedPreferences;
+  final String THEME_MODE_KEY = 'theme_mode';
+
+  ThemeMode _themeMode;
+
+  AppNotifier(this.sharedPreferences) {
+    initThemeMode();
+  }
+
+  initThemeMode() {
+    var themeModePref = sharedPreferences.getString(THEME_MODE_KEY) ?? 'light';
+    _themeMode = themeModePref == 'dark' ? ThemeMode.dark : ThemeMode.light;
+  }
+
+  ThemeMode get themeMode => _themeMode;
+
+  set themeMode(ThemeMode value) {
+    _themeMode = value;
+    notifyListeners();
+
+    var themeModePref = _themeMode == ThemeMode.dark ? 'dark' : 'light';
+    sharedPreferences.setString(THEME_MODE_KEY, themeModePref);
+  }
+}
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Future<SharedPreferences> sharedPreferences = SharedPreferences.getInstance();
+  sharedPreferences.then((value) {
+    runApp(
+      ChangeNotifierProvider(
+        create: (context) => AppNotifier(value),
+        child: LolChampionApp(),
+      ),
+    );
+  });
+}
 
 class LolChampionApp extends StatelessWidget {@override
   Widget build(BuildContext context) {
+    final appNotifier = Provider.of<AppNotifier>(context);
+
     return MaterialApp(
       title: 'Lol Champion App',
       theme: ThemeData(
-          primaryColor: Color.fromRGBO(6, 28, 37, 1),
+        primaryColor: Color.fromRGBO(6, 28, 37, 1),
 //        primaryColorLight: Color.fromRGBO(46, 67, 77, 1),
 //        primaryColorDark: Color.fromRGBO(0, 0, 0, 1),
 
-          accentColor: Color.fromRGBO(194, 143, 44, 1),
+        accentColor: Color.fromRGBO(194, 143, 44, 1),
 
-          appBarTheme: AppBarTheme(
-            brightness: Brightness.light,
-          ),
-
-          brightness: Brightness.light,
-
-          textTheme: Theme.of(context).textTheme.apply(
-              bodyColor: Colors.black87
-          )
+        brightness: Brightness.light,
       ),
       darkTheme: ThemeData(
-          primaryColor: Color.fromRGBO(6, 28, 37, 1),
-//        primaryColorLight: Color.fromRGBO(46, 67, 77, 1),
-//        primaryColorDark: Color.fromRGBO(0, 0, 0, 1),
+        primaryColor: Color.fromRGBO(6, 28, 37, 1),
 
-          accentColor: Color.fromRGBO(194, 143, 44, 1),
+        accentColor: Color.fromRGBO(194, 143, 44, 1),
 
-          toggleableActiveColor: Color.fromRGBO(194, 143, 44, 1),
+        toggleableActiveColor: Color.fromRGBO(194, 143, 44, 1),
 
-          appBarTheme: AppBarTheme(
-            color: Color.fromRGBO(25, 25, 25, 1),
-          ),
-
-          brightness: Brightness.dark,
-
-          textTheme: Theme.of(context).textTheme.apply(
-              bodyColor: Colors.white
-          )
+        brightness: Brightness.dark,
       ),
-      themeMode: ThemeMode.light,
+      themeMode: appNotifier.themeMode,
       home: HomeScreen(),
     );
   }
@@ -497,6 +522,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(appBarTitle),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.settings,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingScreen()
+                )
+              );
+            },
+          )
+        ],
       ),
       body: ListView(
         children: [
