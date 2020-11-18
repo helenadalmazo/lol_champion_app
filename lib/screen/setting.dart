@@ -13,12 +13,6 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<StatefulWidget> {
   AppNotifier appNotifier;
 
-  updateThemeMode(ThemeMode themeMode) {
-    setState(() {
-      appNotifier.themeMode = themeMode;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     appNotifier = Provider.of<AppNotifier>(context);
@@ -44,7 +38,9 @@ class _SettingScreenState extends State<StatefulWidget> {
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     value: ThemeMode.light,
                     groupValue: appNotifier.themeMode,
-                    onChanged: updateThemeMode,
+                    onChanged: (ThemeMode themeMode) {
+                      appNotifier.themeMode = themeMode;
+                    },
                   ),
                   Text(
                     'Claro'
@@ -57,7 +53,9 @@ class _SettingScreenState extends State<StatefulWidget> {
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     value: ThemeMode.dark,
                     groupValue: appNotifier.themeMode,
-                    onChanged: updateThemeMode,
+                    onChanged: (ThemeMode themeMode) {
+                      appNotifier.themeMode = themeMode;
+                    },
                   ),
                   Text(
                     'Escuro'
