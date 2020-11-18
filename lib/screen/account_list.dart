@@ -108,11 +108,14 @@ class _AccountListScreenState extends State<StatefulWidget> {
                   children: [
                     Hero(
                       tag: 'account_image_$index',
-                      child: Image.asset(
-                        'images/account/${accountList[index].imageId}.png',
-                        height: 128,
-                        width: 128,
-                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(32),
+                        child: Image.asset(
+                          'images/account/${accountList[index].imageId}.png',
+                          height: 128,
+                          width: 128,
+                        ),
+                      )
                     ),
                     SizedBox(width: 8),
                     Column(

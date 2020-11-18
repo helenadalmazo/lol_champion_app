@@ -10,10 +10,13 @@ class AccountItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Image.asset(
-          'images/account/${account.imageId}.png',
-          height: 56,
-          width: 56,
+        ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: Image.asset(
+            'images/account/${account.imageId}.png',
+            height: 56,
+            width: 56,
+          ),
         ),
         SizedBox(width: 8),
         Column(

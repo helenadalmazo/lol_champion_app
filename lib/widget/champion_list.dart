@@ -62,52 +62,55 @@ class ChampionListItem extends StatelessWidget {
       onTap: () {
         onTap(champion, context);
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Stack(
-            children: [
-              Image.asset(
-                'images/champion/${champion.name}_0.jpg',
-                fit: BoxFit.contain,
-              ),
-              Positioned(
-                top: -8,
-                right: -8,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).accentColor,
-                    shape: BoxShape.circle
-                  ),
-                  width: 32,
-                  height: 32,
-                  child: Icon(
-                    getIcon(),
-                    color: Colors.white,
-                    size: 16,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Stack(
+              children: [
+                Image.asset(
+                  'images/champion/${champion.name}_0.jpg',
+                  fit: BoxFit.contain,
+                ),
+                Positioned(
+                  top: -8,
+                  right: -8,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).accentColor,
+                      shape: BoxShape.circle
+                    ),
+                    width: 32,
+                    height: 32,
+                    child: Icon(
+                      getIcon(),
+                      color: Colors.white,
+                      size: 16,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: Container(
-              alignment: Alignment.centerLeft,
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor
-              ),
-              child: Text(
-                champion.name,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white
-                ),
-              ),
+              ],
             ),
-          )
-        ]
+            Expanded(
+              child: Container(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor
+                ),
+                child: Text(
+                  champion.name,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white
+                  ),
+                ),
+              ),
+            )
+          ]
+        )
       )
     );
   }

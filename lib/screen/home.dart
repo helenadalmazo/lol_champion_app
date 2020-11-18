@@ -231,7 +231,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         padding: EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                            color: Color.fromRGBO(0, 10, 19, 1)
+                          borderRadius: BorderRadius.circular(30.0),
+                          color: Color.fromRGBO(0, 10, 19, 1)
                         ),
                         child: Icon(
                           Icons.edit,
