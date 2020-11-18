@@ -236,8 +236,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-//  AccountRepository accountRepository = AccountRepository();
-//  ChampionRepository championRepository = ChampionRepository();
   AccountRepository accountRepository;
   ChampionRepository championRepository;
 
