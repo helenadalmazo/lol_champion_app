@@ -8,6 +8,7 @@ import 'package:lol_champion_app/model/champion.dart';
 import 'package:lol_champion_app/screen/account.dart';
 import 'package:lol_champion_app/screen/account_list.dart';
 import 'package:lol_champion_app/screen/setting.dart';
+import 'package:lol_champion_app/widget/account_empty_item.dart';
 import 'package:lol_champion_app/widget/account_item.dart';
 import 'package:lol_champion_app/widget/champion_list.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -167,28 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: Container(
           margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          child: Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                    color: Color.fromRGBO(0, 10, 19, 1)
-                ),
-                child: Icon(
-                  Icons.edit,
-                  size: 32,
-                  color: Color.fromRGBO(52, 57, 60, 1),
-                ),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Adicionar conta',
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-              ),
-            ],
-          ),
+          child: AccountEmptyItem(icon: Icons.edit, text: 'Adicionar conta')
         )
       );
     } else {
@@ -202,11 +182,11 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 for ( var account in accountList )
                   SimpleDialogOption(
-                      onPressed: () {
-                        Navigator.pop(context, 'selected_an_account');
-                        selectAccount(account);
-                      },
-                      child: AccountItem(account: account)
+                    onPressed: () {
+                      Navigator.pop(context, 'selected_an_account');
+                      selectAccount(account);
+                    },
+                    child: AccountItem(account: account)
                   ),
                 SimpleDialogOption(
                   onPressed: () async {
@@ -226,29 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       selectAccount(accountList.first);
                     }
                   },
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30.0),
-                          color: Color.fromRGBO(0, 10, 19, 1)
-                        ),
-                        child: Icon(
-                          Icons.edit,
-                          size: 32,
-                          color: Color.fromRGBO(52, 57, 60, 1),
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Editar contas',
-                          style: Theme.of(context).textTheme.subtitle1,
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: AccountEmptyItem(icon: Icons.edit, text: 'Editar contas')
                 )
               ],
             )
