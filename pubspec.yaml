@@ -24,9 +24,10 @@ dependencies:
   flutter:
     sdk: flutter
 
-  sqflite:
   path:
-  autocomplete_textfield:
+  provider:
+  shared_preferences:
+  sqflite:
   visibility_detector:
 
 
