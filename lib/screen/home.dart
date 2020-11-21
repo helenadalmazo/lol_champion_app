@@ -86,7 +86,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void addChampion(Champion champion, BuildContext context) {
-    champion.chest = false;
     championRepository.insert(selectedAccount, champion).then((id) {
       setState(() {
         champion.id = id;
