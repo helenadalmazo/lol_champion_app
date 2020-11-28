@@ -39,7 +39,7 @@ class _AccountListScreenState extends State<StatefulWidget> {
   }
 
   void removeAt(int index, Account account) {
-    accountRepository.delete(account.id).then((_) {
+    accountRepository.delete(account).then((_) {
       setState(() {
         accountList.removeAt(index);
       });
@@ -84,10 +84,10 @@ class _AccountListScreenState extends State<StatefulWidget> {
                 var accountScreenResult = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AccountScreen(
-                          index: index,
-                          account: accountList[index]
-                      )
+                    builder: (context) => AccountScreen(
+                      index: index,
+                      account: accountList[index]
+                    )
                   )
                 );
 

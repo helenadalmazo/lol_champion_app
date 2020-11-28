@@ -43,13 +43,16 @@ class AccountRepository {
     );
   }
 
-  Future<int> delete(int id) async {
+  Future<int> delete(Account account) async {
     final Database database = await LolChampionAppDatabase.instance.database;
+
+    ChampionRepository championRepository = ChampionRepository();
+    await championRepository.delete(account);
 
     return database.delete(
       Account.table,
       where: "${Account.columnId} = ?",
-      whereArgs: [id],
+      whereArgs: [account.id],
     );
   }
 

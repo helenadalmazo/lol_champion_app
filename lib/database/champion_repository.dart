@@ -40,15 +40,15 @@ class ChampionRepository {
     );
   }
 
-//  Future<void> delete(int id) async {
-//    final Database database = await LolChampionAppDatabase.instance.database;
-//
-//    await database.delete(
-//      table,
-//      where: "id = ?",
-//      whereArgs: [id],
-//    );
-//  }
+  Future<int> delete(Account account) async {
+    final Database database = await LolChampionAppDatabase.instance.database;
+
+    return database.delete(
+      Champion.table,
+      where: "${Champion.columnAccountId} = ?",
+      whereArgs: [account.id],
+    );
+  }
 
   static String createTable() {
     return """
