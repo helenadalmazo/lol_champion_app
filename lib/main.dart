@@ -57,6 +57,12 @@ class LolChampionApp extends StatelessWidget {
 
         accentColor: Color.fromRGBO(194, 143, 44, 1),
 
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            primary: Color.fromRGBO(6, 28, 37, 1),
+          ),
+        ),
+
         brightness: Brightness.light,
       ),
       darkTheme: ThemeData(
@@ -65,6 +71,12 @@ class LolChampionApp extends StatelessWidget {
         accentColor: Color.fromRGBO(194, 143, 44, 1),
 
         toggleableActiveColor: Color.fromRGBO(194, 143, 44, 1),
+
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            primary: Color.fromRGBO(194, 143, 44, 1),
+          ),
+        ),
 
         brightness: Brightness.dark,
       ),
