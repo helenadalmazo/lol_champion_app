@@ -7,6 +7,7 @@ import 'package:lol_champion_app/model/account.dart';
 import 'package:lol_champion_app/model/champion.dart';
 import 'package:lol_champion_app/screen/account.dart';
 import 'package:lol_champion_app/screen/account_list.dart';
+import 'package:lol_champion_app/screen/champion_list.dart';
 import 'package:lol_champion_app/screen/setting.dart';
 import 'package:lol_champion_app/widget/account_empty_item.dart';
 import 'package:lol_champion_app/widget/account_item.dart';
@@ -21,26 +22,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  AccountRepository accountRepository;
-  ChampionRepository championRepository;
+  AccountRepository accountRepository = AccountRepository();
+  ChampionRepository championRepository = ChampionRepository();
 
-  List<Account> accountList;
-  Account selectedAccount;
-  List<Champion> disabledChampionsList = [];
+  List<Account> accountList = [];
+  Account selectedAccount = null;
 
   String appBarTitle = "";
 
   Key chestAvailableKey = Key('chest_available');
   Key chestObtainedKey = Key('chest_obtained');
-  Key chestDisabledKey = Key('chest_disabled');
 
   double chestAvailableVisibilityPercentage = 0;
   double chestObtainedVisibilityPercentage = 0;
-  double chestDisabledVisibilityPercentage = 0;
 
   _HomeScreenState() {
-    accountRepository = AccountRepository();
-    championRepository = ChampionRepository();
     listAccounts();
   }
 
@@ -49,8 +45,11 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         this.accountList = accountList;
       });
-      if (accountList.isNotEmpty) {
+      if (!accountList.contains(selectedAccount)
+          || accountList.isNotEmpty) {
         selectAccount(accountList.first);
+      } else {
+        deselectAccount();
       }
     });
   }
@@ -68,31 +67,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void selectAccount(Account account) {
     setState(() {
       this.selectedAccount = account;
-      List<String> championNameList = selectedAccount.championList
-          .map((champ) => champ.name)
-          .toList();
-      this.disabledChampionsList = ddragonChampionList
-          .where((str) => !championNameList.contains(str))
-          .map((str) => Champion(name: str, chest: false))
-          .toList();
     });
   }
 
   void deselectAccount() {
     setState(() {
       this.selectedAccount = null;
-      this.disabledChampionsList = [];
-    });
-  }
-
-  void addChampion(Champion champion, BuildContext context) {
-    championRepository.insert(selectedAccount, champion).then((id) {
-      setState(() {
-        champion.id = id;
-        this.selectedAccount.championList.add(champion);
-        this.selectedAccount.championList.sort((a, b) => a.name.compareTo(b.name));
-        this.disabledChampionsList.remove(champion);
-      });
     });
   }
 
@@ -120,8 +100,6 @@ class _HomeScreenState extends State<HomeScreen> {
       chestAvailableVisibilityPercentage = visiblePercentage;
     } else if (visibilityInfo.key == chestObtainedKey) {
       chestObtainedVisibilityPercentage = visiblePercentage;
-    } else if (visibilityInfo.key == chestDisabledKey) {
-      chestDisabledVisibilityPercentage = visiblePercentage;
     }
 
     changeAppBarTitle();
@@ -131,19 +109,20 @@ class _HomeScreenState extends State<HomeScreen> {
     String appBarTitle = "";
 
     var maxVisibility = max(chestAvailableVisibilityPercentage, chestObtainedVisibilityPercentage);
-    maxVisibility = max(maxVisibility, chestDisabledVisibilityPercentage);
 
     if (maxVisibility == chestAvailableVisibilityPercentage) {
       appBarTitle = "Baús disponíveis";
     } else if (maxVisibility == chestObtainedVisibilityPercentage) {
       appBarTitle = "Baús obtidos";
-    } else if (maxVisibility == chestDisabledVisibilityPercentage) {
-      appBarTitle = "Baús desabilitados";
     }
 
     setState(() {
       this.appBarTitle = appBarTitle;
     });
+  }
+
+  IconData getIcon(Champion champion) {
+    return champion.chest ? Icons.check : Icons.close;
   }
 
   Widget getSelectedAccountWidget() {
@@ -198,12 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         )
                       )
                     );
-                    if (accountList.isEmpty) {
-                      deselectAccount();
-                    }
-                    if (!accountList.contains(selectedAccount)) {
-                      selectAccount(accountList.first);
-                    }
+                    listAccounts();
                   },
                   child: AccountEmptyItem(icon: Icons.edit, text: 'Editar contas')
                 )
@@ -222,6 +196,27 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         )
+      );
+    }
+  }
+
+  Widget getFab(BuildContext context) {
+    if (selectedAccount == null) {
+      return Container();
+    } else {
+      return FloatingActionButton(
+        onPressed: () async {
+          var addedChampionResult = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChampionListScreen(account: selectedAccount)
+            )
+          );
+          if (addedChampionResult != null) {
+            selectedAccount.championList.addAll(addedChampionResult);
+          }
+        },
+        child: Icon(Icons.add),
       );
     }
   }
@@ -258,6 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ChampionList(
               title: 'Campeões com baús disponíveis',
               championList: selectedAccount == null ? [] : selectedAccount.getChampionWithoutChest(),
+              getIcon: getIcon,
               onTapItem: toggleChampionChest
             ),
             onVisibilityChanged: onVisibilityChanged,
@@ -268,23 +264,15 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ChampionList(
               title: 'Campeões com baús obtidos',
               championList: selectedAccount == null ? [] : selectedAccount.getChampionWithChest(),
-              onTapItem: toggleChampionChest
-            ),
-            onVisibilityChanged: onVisibilityChanged,
-          ),
-          SizedBox(height: 16),
-          VisibilityDetector(
-            key: chestDisabledKey,
-            child: ChampionList(
-              title: 'Campões não obtidos',
-              championList: disabledChampionsList,
-              onTapItem: addChampion,
+                getIcon: getIcon,
+                onTapItem: toggleChampionChest
             ),
             onVisibilityChanged: onVisibilityChanged,
           ),
           SizedBox(height: 16)
         ],
       ),
+      floatingActionButton: getFab(context)
     );
   }
 }

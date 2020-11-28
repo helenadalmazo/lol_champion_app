@@ -4,9 +4,16 @@ import 'package:lol_champion_app/model/champion.dart';
 class ChampionList extends StatelessWidget {
   final String title;
   final List<Champion> championList;
+  final Function getIcon;
   final Function onTapItem;
 
-  const ChampionList({Key key, this.title, this.championList, this.onTapItem}) : super(key: key);
+  const ChampionList({
+    Key key,
+    this.title,
+    this.championList,
+    this.getIcon,
+    this.onTapItem
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +23,11 @@ class ChampionList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.headline6
-          ),
+          if (title != null)
+            Text(
+              title,
+              style: Theme.of(context).textTheme.headline6
+            ),
           SizedBox(height: 8),
           GridView.count(
             crossAxisCount: 3,
@@ -32,7 +40,8 @@ class ChampionList extends StatelessWidget {
               for (var champion in championList)
                 ChampionListItem(
                   champion: champion,
-                  onTap: onTapItem
+                  getIcon: getIcon,
+                  onTap: onTapItem,
                 )
             ]
           ),
@@ -44,22 +53,21 @@ class ChampionList extends StatelessWidget {
 
 class ChampionListItem extends StatelessWidget {
   final Champion champion;
+  final Function getIcon;
   final Function onTap;
 
-  const ChampionListItem({Key key, this.champion, this.onTap}) : super(key: key);
-
-  IconData getIcon() {
-    if (champion.id == null) {
-      return Icons.lock_outline;
-    }
-
-    return champion.chest ? Icons.check : Icons.close;
-  }
+  const ChampionListItem({
+    Key key,
+    this.champion,
+    this.getIcon,
+    this.onTap
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        if (onTap == null) return;
         onTap(champion, context);
       },
       child: ClipRRect(
@@ -84,7 +92,7 @@ class ChampionListItem extends StatelessWidget {
                     width: 32,
                     height: 32,
                     child: Icon(
-                      getIcon(),
+                      getIcon(champion),
                       color: Colors.white,
                       size: 16,
                     ),
