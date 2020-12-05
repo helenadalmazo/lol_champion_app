@@ -101,11 +101,13 @@ class _ChampionListScreenState extends State<StatefulWidget> {
       ),
       body: ListView(
         children: [
+          SizedBox(height: 16),
           ChampionList(
             championList: disabledChampionsList,
             getIcon: getIcon,
             onTapItem: addChampion,
-          )
+          ),
+          SizedBox(height: 16),
         ],
       ),
       floatingActionButton: getFab(context)

@@ -30,7 +30,8 @@ class ChampionList extends StatelessWidget {
               title,
               style: Theme.of(context).textTheme.headline6
             ),
-          SizedBox(height: 8),
+          if (title != null)
+            SizedBox(height: 8),
           GridView.count(
             crossAxisCount: 3,
             crossAxisSpacing: 8,
