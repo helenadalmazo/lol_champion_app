@@ -140,7 +140,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void changeAppBarTitle() {
     String appBarTitle = "";
 
-    var maxVisibility = max(chestAvailableVisibilityPercentage, chestObtainedVisibilityPercentage);
+    var maxVisibility = max(
+        chestAvailableVisibilityPercentage,
+        chestObtainedVisibilityPercentage
+    );
 
     if (maxVisibility == chestAvailableVisibilityPercentage) {
       appBarTitle = "Baús disponíveis";
