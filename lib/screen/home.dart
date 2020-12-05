@@ -45,11 +45,10 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         this.accountList = accountList;
       });
-      if (!accountList.contains(selectedAccount)
-          || accountList.isNotEmpty) {
-        selectAccount(accountList.first);
-      } else {
+      if (accountList.isEmpty) {
         deselectAccount();
+      } else if (!accountList.contains(selectedAccount)) {
+        selectAccount(accountList.first);
       }
     });
   }
@@ -76,6 +75,28 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void showChampionBottomSheet(Champion champion, BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+        builder: (BuildContext context) {
+          return Container(
+            child: Wrap(
+              children: [
+                ListTile(
+                  onTap: () {
+                    deleteChampion(champion);
+                    Navigator.pop(context);
+                  },
+                  leading: Icon(Icons.delete),
+                  title: Text('Remover campeão'),
+                ),
+              ],
+            ),
+          );
+        }
+    );
+  }
+
   void toggleChampionChest(Champion champion, BuildContext context) {
     champion.chest = !champion.chest;
 
@@ -90,6 +111,17 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         champion = champion;
       });
+    });
+  }
+
+  void deleteChampion(Champion champion) {
+    championRepository.delete(selectedAccount, champion).then((value) {
+      if (value > 0) {
+        setState(() {
+          selectedAccount.championList.remove(champion);
+          selectedAccount.championList.sort((a, b) => a.name.compareTo(b.name));
+        });
+      }
     });
   }
 
@@ -214,6 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
           if (addedChampionResult != null) {
             selectedAccount.championList.addAll(addedChampionResult);
+            selectedAccount.championList.sort((a, b) => a.name.compareTo(b.name));
           }
         },
         child: Icon(Icons.add),
@@ -254,7 +287,8 @@ class _HomeScreenState extends State<HomeScreen> {
               title: 'Campeões com baús disponíveis',
               championList: selectedAccount == null ? [] : selectedAccount.getChampionWithoutChest(),
               getIcon: getIcon,
-              onTapItem: toggleChampionChest
+              onTapItem: toggleChampionChest,
+              onLongPressItem: showChampionBottomSheet
             ),
             onVisibilityChanged: onVisibilityChanged,
           ),
@@ -264,8 +298,9 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ChampionList(
               title: 'Campeões com baús obtidos',
               championList: selectedAccount == null ? [] : selectedAccount.getChampionWithChest(),
-                getIcon: getIcon,
-                onTapItem: toggleChampionChest
+              getIcon: getIcon,
+              onTapItem: toggleChampionChest,
+              onLongPressItem: showChampionBottomSheet
             ),
             onVisibilityChanged: onVisibilityChanged,
           ),

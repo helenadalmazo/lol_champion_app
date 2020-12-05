@@ -6,13 +6,15 @@ class ChampionList extends StatelessWidget {
   final List<Champion> championList;
   final Function getIcon;
   final Function onTapItem;
+  final Function onLongPressItem;
 
   const ChampionList({
     Key key,
     this.title,
     this.championList,
     this.getIcon,
-    this.onTapItem
+    this.onTapItem,
+    this.onLongPressItem
   }) : super(key: key);
 
   @override
@@ -42,6 +44,7 @@ class ChampionList extends StatelessWidget {
                   champion: champion,
                   getIcon: getIcon,
                   onTap: onTapItem,
+                  onLongPress: onLongPressItem
                 )
             ]
           ),
@@ -55,12 +58,14 @@ class ChampionListItem extends StatelessWidget {
   final Champion champion;
   final Function getIcon;
   final Function onTap;
+  final Function onLongPress;
 
   const ChampionListItem({
     Key key,
     this.champion,
     this.getIcon,
-    this.onTap
+    this.onTap,
+    this.onLongPress
   }) : super(key: key);
 
   @override
@@ -69,6 +74,10 @@ class ChampionListItem extends StatelessWidget {
       onTap: () {
         if (onTap == null) return;
         onTap(champion, context);
+      },
+      onLongPress: () {
+        if (onLongPress == null) return;
+        onLongPress(champion, context);
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
